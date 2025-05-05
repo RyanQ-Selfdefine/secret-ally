@@ -51,14 +51,14 @@ if st.button("✨ 听听神秘盟友的回应"):
 
                 # Create a completion using the new client API
                 response = client.chat.completions.create(
-                    model="gpt-4",
-                    messages=[
-                        {"role": "system", "content": system_prompt[language]},
-                        {"role": "user", "content": user_input}
-                    ],
-                    temperature=0.9,
-                    max_tokens=300
-                )
+                model="gpt-3.5-turbo",  # Use gpt-3.5-turbo instead of gpt-4
+                messages=[
+                    {"role": "system", "content": system_prompt[language]},
+                    {"role": "user", "content": user_input}
+                ],
+                temperature=0.9,
+                max_tokens=300
+            )
 
                 # Extract and display the reply
                 reply = response.choices[0].message.content.strip()
