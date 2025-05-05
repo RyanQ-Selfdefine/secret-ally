@@ -1,6 +1,5 @@
-
 import streamlit as st
-import openai
+from openai import OpenAI
 
 # 设置页面和背景风格
 st.set_page_config(page_title="神秘盟友 · Secret Ally", layout="centered")
@@ -40,16 +39,18 @@ if st.button("✨ 听听神秘盟友的回应"):
         st.error("请输入一些内容")
     else:
         with st.spinner("神秘盟友正在聆听你..."):
-            openai.api_key = api_key
-
-            system_prompt = {
-                "中文": "你是一位温柔、深思、有智慧的神秘盟友。用温暖、肯定、真挚的语气，回应朋友的情绪，帮助他看到自己内在的价值，避免说教。",
-                "English": "You are a thoughtful and gentle secret ally. Respond warmly and sincerely, affirming the user's feelings, and gently helping them see their worth without sounding preachy."
-            }
-
             try:
-                # ✅ 新版 Chat API 用法
-                response = openai.ChatCompletion.create(
+                # Instantiate the OpenAI client
+                client = OpenAI(api_key=api_key)
+
+                # Define the system prompt
+                system_prompt = {
+                    "中文": "你是一位温柔、深思、有智慧的神秘盟友。用温暖、肯定、真挚的语气，回应朋友的情绪，帮助他们看到自己内在的价值，避免说教。",
+                    "English": "You are a thoughtful and gentle secret ally. Respond warmly and sincerely, affirming the user's feelings, and gently helping them see their worth without sounding preachy."
+                }
+
+                # Create a completion using the new client API
+                response = client.chat.completions.create(
                     model="gpt-4",
                     messages=[
                         {"role": "system", "content": system_prompt[language]},
@@ -59,8 +60,9 @@ if st.button("✨ 听听神秘盟友的回应"):
                     max_tokens=300
                 )
 
+                # Extract and display the reply
                 reply = response.choices[0].message.content.strip()
                 st.markdown(f"<div class='response-box'>{reply}</div>", unsafe_allow_html=True)
+
             except Exception as e:
                 st.error(f"出错了：{e}")
-
