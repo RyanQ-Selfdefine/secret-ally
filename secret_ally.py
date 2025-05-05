@@ -48,14 +48,19 @@ if st.button("✨ 听听神秘盟友的回应"):
             }
 
             try:
-                # 使用 openai.Completion.create 来适配新 API
-                response = openai.Completion.create(
-                    model="gpt-4",  # 使用 GPT-4
-                    prompt=system_prompt[language] + "\n\n" + user_input,  # 输入的提示词 + 用户输入
-                    max_tokens=150,  # 设置最大回复长度
-                    temperature=0.9  # 生成的回复的创造性
+                # ✅ 新版 Chat API 用法
+                response = openai.ChatCompletion.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": system_prompt[language]},
+                        {"role": "user", "content": user_input}
+                    ],
+                    temperature=0.9,
+                    max_tokens=300
                 )
-                reply = response['choices'][0]['text'].strip()
+
+                reply = response.choices[0].message.content.strip()
                 st.markdown(f"<div class='response-box'>{reply}</div>", unsafe_allow_html=True)
             except Exception as e:
                 st.error(f"出错了：{e}")
+
